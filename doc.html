@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Finance Closed-Book Test</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 1rem; }
+  h1 { text-align: center; }
+  .timer { font-size: 1.5rem; margin-bottom: 1rem; text-align: center; }
+  .warning { color: red; font-weight: bold; text-align: center; margin: 1rem 0; }
+  label { display: block; margin-top: 1rem; font-weight: bold; }
+  textarea, input[type=text], select { width: 100%; padding: 0.5rem; margin-top: 0.3rem; font-size: 1rem; }
+  button { margin-top: 1.5rem; font-size: 1.2rem; padding: 0.6rem 1.2rem; }
+  #camera { display: block; margin: 1rem auto; border: 1px solid #ccc; }
+  #photos { margin-top: 1rem; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<h1>Finance Closed-Book Test</h1>
+<div class="timer" id="timer">Time Left: 05:00</div>
+<div class="warning" id="warning" style="display:none;"></div>
+
+<form id="testForm">
+  <label for="q1">1. What is the primary function of the Federal Reserve?</label>
+  <textarea id="q1" rows="3" required></textarea>
+
+  <label for="q2">2. Which financial statement shows a company's assets and liabilities?</label>
+  <select id="q2" required>
+    <option value="" disabled selected>Select an option</option>
+    <option value="Income Statement">Income Statement</option>
+    <option value="Balance Sheet">Balance Sheet</option>
+    <option value="Cash Flow Statement">Cash Flow Statement</option>
+  </select>
+
+  <label for="q3">3. Explain the difference between a stock and a bond.</label>
+  <textarea id="q3" rows="3" required></textarea>
+
+  <button type="submit">Submit Test</button>
+</form>
+
+<video id="camera" width="320" height="240" autoplay muted></video>
+
+<div id="photos"></div>
+
+<script>
+(() => {
+  const testDurationSec = 300; // 5 minutes
+  let timeLeft = testDurationSec;
+  const timerEl = document.getElementById('timer');
+  const warningEl = document.getElementById('warning');
+  const form = document.getElementById('testForm');
+  const camera = document.getElementById('camera');
+  const photosEl = document.getElementById('photos');
+
+  let snapshots = []; // store base64 images with timestamps
+  let snapshotIntervalId = null;
+  let timerIntervalId = null;
+  let testSubmitted = false;
+
+  // Setup camera stream
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      camera.srcObject = stream;
+    } catch (err) {
+      alert('Camera access is required to take snapshots during the test.');
+      console.error(err);
+    }
+  }
+
+  // Take snapshot from video and save base64 image with timestamp
+  function takeSnapshot() {
+    if (!camera.srcObject) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = camera.videoWidth || 320;
+    canvas.height = camera.videoHeight || 240;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(camera, 0, 0, canvas.width, canvas.height);
+    const imageData = canvas.toDataURL('image/png');
+    const timestamp = new Date().toISOString();
+    snapshots.push({ timestamp, imageData });
+    photosEl.textContent = `Snapshots taken: ${snapshots.length}`;
+  }
+
+  // Update timer display
+  function updateTimer() {
+    const minutes = String(Math.floor(timeLeft / 60)).padStart(2,'0');
+    const seconds = String(timeLeft % 60).padStart(2,'0');
+    timerEl.textContent = `Time Left: ${minutes}:${seconds}`;
+  }
+
+  // Submit test function: gather answers + snapshots and offer download
+  function submitTest(reason) {
+    if (testSubmitted) return;
+    testSubmitted = true;
+
+    clearInterval(timerIntervalId);
+    clearInterval(snapshotIntervalId);
+
+    warningEl.style.display = 'block';
+    warningEl.textContent = reason ? `Test submitted automatically: ${reason}` : 'Test submitted successfully!';
+
+    // Collect answers
+    const answers = {
+      submittedAt: new Date().toISOString(),
+      reason: reason || 'Manual submit',
+      answers: {
+        q1: form.q1.value.trim(),
+        q2: form.q2.value,
+        q3: form.q3.value.trim()
+      },
+      snapshots
+    };
+
+    // Create JSON file for download
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(answers, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    const fileName = `finance_test_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+    dlAnchorElem.setAttribute("download", fileName);
+    document.body.appendChild(dlAnchorElem);
+    dlAnchorElem.click();
+    dlAnchorElem.remove();
+
+    // Disable form inputs & button
+    form.querySelectorAll('input, textarea, select, button').forEach(el => el.disabled = true);
+  }
+
+  // Handle tab/window visibility change (auto-submit on tab switch)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !testSubmitted) {
+      submitTest('Tab/window switch detected');
+    }
+  });
+
+  // Timer countdown
+  function startTimer() {
+    updateTimer();
+    timerIntervalId = setInterval(() => {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) {
+        submitTest('Time is up');
+      }
+    }, 1000);
+  }
+
+  // Start snapshot interval (every 60 sec)
+  function startSnapshots() {
+    takeSnapshot(); // immediate snapshot on start
+    snapshotIntervalId = setInterval(() => {
+      takeSnapshot();
+    }, 60000);
+  }
+
+  // On form submit handler
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (testSubmitted) return;
+    submitTest('Manual submission');
+  });
+
+  // Initialize
+  startCamera();
+  startTimer();
+  startSnapshots();
+})();
+</script>
+
+</body>
+</html>
