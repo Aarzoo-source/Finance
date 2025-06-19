@@ -5,15 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Finance Closed-Book Test</title>
 <style>
-  body { font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 1rem; }
-  h1 { text-align: center; }
-  .timer { font-size: 1.5rem; margin-bottom: 1rem; text-align: center; }
-  .warning { color: red; font-weight: bold; text-align: center; margin: 1rem 0; }
-  label { display: block; margin-top: 1rem; font-weight: bold; }
-  textarea, input[type=text], select { width: 100%; padding: 0.5rem; margin-top: 0.3rem; font-size: 1rem; }
-  button { margin-top: 1.5rem; font-size: 1.2rem; padding: 0.6rem 1.2rem; }
-  #camera { display: block; margin: 1rem auto; border: 1px solid #ccc; }
-  #photos { margin-top: 1rem; font-size: 0.9rem; }
+.question-block {
+  background-color: rgb(108, 195, 224);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.question-block label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.question-block textarea,
+.question-block select {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1rem;
+  width: 100%;
+}
 </style>
 </head>
 <body>
@@ -23,8 +37,29 @@
 <div class="warning" id="warning" style="display:none;"></div>
 
 <form id="testForm">
-  <label for="q1">1. What is the primary function of the Federal Reserve?</label>
-  <textarea id="q1" rows="3" required></textarea>
+<form id="testForm">
+  <div class="question-block">
+    <label for="q1">1. What is the primary function of the Federal Reserve?</label>
+    <textarea id="q1" rows="3" required></textarea>
+  </div>
+
+  <div class="question-block">
+    <label for="q2">2. Which financial statement shows a company's assets and liabilities?</label>
+    <select id="q2" required>
+      <option value="" disabled selected>Select an option</option>
+      <option value="Income Statement">Income Statement</option>
+      <option value="Balance Sheet">Balance Sheet</option>
+      <option value="Cash Flow Statement">Cash Flow Statement</option>
+    </select>
+  </div>
+
+  <div class="question-block">
+    <label for="q3">3. Explain the difference between a stock and a bond.</label>
+    <textarea id="q3" rows="3" required></textarea>
+  </div>
+
+  <button type="submit">Submit Test</button>
+</form>
 
   <label for="q2">2. Which financial statement shows a company's assets and liabilities?</label>
   <select id="q2" required>
