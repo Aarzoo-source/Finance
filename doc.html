@@ -1,172 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Centroid Solutions</title>
-  <style>
-    body {
-      font-family: 'Andalus', Arial, sans-serif;
-      font-size: 18px;
-      background-color: #f9f9f9;
-      margin: 0;
-      padding: 2rem;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Centroid Solutions Test</title>
+<style>
+  body {
+    font-family: 'Andalus', Arial, sans-serif;
+    font-size: 18px;
+    max-width: 700px;
+    margin: auto;
+    padding: 1rem;
+    background-color: #f9f9f9;
+  }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
+  h1 {
+    text-align: center;
+  }
 
-    .question-container {
-      display: none;
-      max-width: 16cm;
-      margin: 0 auto;
-    }
+  .timer {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
 
-    .question-box {
-      background-color: rgb(108, 195, 224);
-      padding: 10px 15px;
-      border-radius: 10px;
-      font-weight: bold;
-      color: #000;
-      margin-bottom: 1rem;
-      width: 16cm;
-      height: 1cm;
-      display: flex;
-      align-items: center;
-    }
+  .warning {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    margin: 1rem 0;
+  }
 
-    textarea,
-    select {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 18px;
-      width: 16cm;
-      font-family: 'Andalus', Arial, sans-serif;
-    }
+  .question-container {
+    margin-bottom: 25px;
+    text-align: center;
+  }
 
-    textarea {
-      height: 3cm;
-    }
+  .question-text {
+    background-color: rgb(108, 195, 224);
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #000;
+    width: 16cm;
+    height: 1cm;
+    line-height: 1cm;
+    margin: 0 auto 8px auto;
+    box-sizing: border-box;
+  }
 
-    .dropdown-answer {
-      height: 1cm;
-    }
+  textarea, select {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 18px;
+    font-family: 'Andalus', Arial, sans-serif;
+    width: 16cm;
+    box-sizing: border-box;
+    margin: 0 auto;
+    display: block;
+  }
 
-    .nav-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 2cm;
-      margin-top: 5cm;
-      width: 16cm;
-      margin-left: auto;
-      margin-right: auto;
-    }
+  textarea {
+    height: 3cm;
+    resize: vertical;
+  }
 
-    .nav-buttons button {
-      background-color: rgb(108, 195, 224);
-      border: none;
-      padding: 0 1.5rem;
-      font-size: 1rem;
-      height: 1cm;
-      cursor: pointer;
-      border-radius: 5px;
-    }
+  .nav-buttons {
+    width: 16cm;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 2cm; /* gap between buttons */
+    margin-top: 5cm; /* 5cm gap from answer box */
+  }
 
-    .submit-button {
-      background-color: rgb(108, 195, 224);
-    }
-  </style>
+  .nav-buttons button {
+    background-color: rgb(108, 195, 224);
+    border: none;
+    border-radius: 5px;
+    width: 5cm;
+    height: 38px; /* approx 1cm */
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
 
-<h1>Centroid Solutions</h1>
+<h1>Centroid Solutions Test</h1>
+<div class="timer" id="timer">Time Left: 05:00</div>
+<div class="warning" id="warning" style="display:none;"></div>
 
 <form id="testForm">
-
-  <div class="question-container" id="question1">
-    <div class="question-box">1. What is the primary function of the Federal Reserve?</div>
+  <div class="question-container">
+    <div class="question-text" id="questionText">1. What is the primary function of the Federal Reserve?</div>
     <textarea id="q1" required></textarea>
-    <div class="nav-buttons">
-      <button type="button" onclick="nextQuestion()">Next</button>
-    </div>
   </div>
 
-  <div class="question-container" id="question2">
-    <div class="question-box">2. Which financial statement shows a company's assets and liabilities?</div>
-    <select id="q2" class="dropdown-answer" required>
-      <option value="" disabled selected>Select an option</option>
-      <option value="Income Statement">Income Statement</option>
-      <option value="Balance Sheet">Balance Sheet</option>
-      <option value="Cash Flow Statement">Cash Flow Statement</option>
-    </select>
-    <div class="nav-buttons">
-      <button type="button" onclick="prevQuestion()">Previous</button>
-      <button type="button" onclick="nextQuestion()">Next</button>
-    </div>
+  <div class="nav-buttons" id="navButtons">
+    <!-- Buttons added dynamically -->
   </div>
-
-  <div class="question-container" id="question3">
-    <div class="question-box">3. Explain the difference between a stock and a bond.</div>
-    <textarea id="q3" required></textarea>
-    <div class="nav-buttons">
-      <button type="button" onclick="prevQuestion()">Previous</button>
-      <button type="submit" class="submit-button">Submit</button>
-    </div>
-  </div>
-
 </form>
 
 <script>
-  let currentQuestion = 1;
-  const totalQuestions = 3;
-
-  function showQuestion(num) {
-    for (let i = 1; i <= totalQuestions; i++) {
-      document.getElementById(`question${i}`).style.display = 'none';
+(() => {
+  const questions = [
+    {
+      text: "1. What is the primary function of the Federal Reserve?",
+      type: "textarea",
+      id: "q1"
+    },
+    {
+      text: "2. Which financial statement shows a company's assets and liabilities?",
+      type: "select",
+      id: "q2",
+      options: [
+        {value: "", text: "Select an option", disabled: true, selected: true},
+        {value: "Income Statement", text: "Income Statement"},
+        {value: "Balance Sheet", text: "Balance Sheet"},
+        {value: "Cash Flow Statement", text: "Cash Flow Statement"}
+      ]
+    },
+    {
+      text: "3. Explain the difference between a stock and a bond.",
+      type: "textarea",
+      id: "q3"
     }
-    document.getElementById(`question${num}`).style.display = 'block';
+  ];
+
+  let currentIndex = 0;
+  const form = document.getElementById('testForm');
+  const questionTextEl = document.getElementById('questionText');
+  const navButtonsEl = document.getElementById('navButtons');
+
+  function createAnswerElement(question) {
+    let el;
+    if (question.type === 'textarea') {
+      el = document.createElement('textarea');
+      el.id = question.id;
+      el.required = false; // freedom to skip
+      el.style.height = '3cm';
+      el.style.width = '16cm';
+      el.style.fontFamily = "'Andalus', Arial, sans-serif";
+      el.style.fontSize = '18px';
+      el.style.display = 'block';
+      el.style.margin = '0 auto';
+      el.style.backgroundColor = '#fff';
+      el.style.border = '1px solid #ccc';
+      el.style.borderRadius = '5px';
+      el.style.boxSizing = 'border-box';
+    } else if (question.type === 'select') {
+      el = document.createElement('select');
+      el.id = question.id;
+      el.required = false;
+      el.style.width = '16cm';
+      el.style.height = '1cm'; // match question height
+      el.style.fontFamily = "'Andalus', Arial, sans-serif";
+      el.style.fontSize = '18px';
+      el.style.display = 'block';
+      el.style.margin = '0 auto';
+      el.style.backgroundColor = '#fff';
+      el.style.border = '1px solid #ccc';
+      el.style.borderRadius = '5px';
+      el.style.boxSizing = 'border-box';
+
+      question.options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.text;
+        if(opt.disabled) option.disabled = true;
+        if(opt.selected) option.selected = true;
+        el.appendChild(option);
+      });
+    }
+    return el;
   }
 
-  function nextQuestion() {
-    if (currentQuestion < totalQuestions) {
-      currentQuestion++;
-      showQuestion(currentQuestion);
+  function renderQuestion(index) {
+    const q = questions[index];
+    questionTextEl.textContent = q.text;
+
+    // Remove existing answer input
+    const oldAnswer = form.querySelector('textarea, select');
+    if (oldAnswer) form.removeChild(oldAnswer);
+
+    // Create new answer input
+    const answerEl = createAnswerElement(q);
+    form.insertBefore(answerEl, navButtonsEl);
+
+    // Render navigation buttons
+    navButtonsEl.innerHTML = '';
+
+    // Previous button (not on first)
+    if(index > 0){
+      const prevBtn = document.createElement('button');
+      prevBtn.type = 'button';
+      prevBtn.textContent = 'Previous';
+      prevBtn.addEventListener('click', () => {
+        saveAnswer();
+        currentIndex--;
+        renderQuestion(currentIndex);
+      });
+      navButtonsEl.appendChild(prevBtn);
+    }
+
+    // Next or Submit button
+    if(index < questions.length - 1){
+      const nextBtn = document.createElement('button');
+      nextBtn.type = 'button';
+      nextBtn.textContent = 'Next';
+      nextBtn.addEventListener('click', () => {
+        saveAnswer();
+        currentIndex++;
+        renderQuestion(currentIndex);
+      });
+      navButtonsEl.appendChild(nextBtn);
+    } else {
+      const submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.textContent = 'Submit';
+      navButtonsEl.appendChild(submitBtn);
+    }
+
+    loadAnswer();
+  }
+
+  // Store answers in memory object (to preserve on navigation)
+  const answers = {};
+
+  function saveAnswer(){
+    const q = questions[currentIndex];
+    const el = document.getElementById(q.id);
+    if(q.type === 'textarea'){
+      answers[q.id] = el.value;
+    } else if(q.type === 'select'){
+      answers[q.id] = el.value;
     }
   }
 
-  function prevQuestion() {
-    if (currentQuestion > 1) {
-      currentQuestion--;
-      showQuestion(currentQuestion);
+  function loadAnswer(){
+    const q = questions[currentIndex];
+    const el = document.getElementById(q.id);
+    if(answers[q.id]){
+      el.value = answers[q.id];
+    } else {
+      el.value = '';
     }
   }
 
-  // Show the first question on load
-  document.addEventListener('DOMContentLoaded', () => {
-    showQuestion(currentQuestion);
-  });
-
-  document.getElementById('testForm').addEventListener('submit', function (e) {
+  form.addEventListener('submit', e => {
     e.preventDefault();
-    const answers = {
+    saveAnswer();
+    // Prepare submission data
+    const submission = {
       submittedAt: new Date().toISOString(),
-      answers: {
-        q1: document.getElementById('q1').value.trim(),
-        q2: document.getElementById('q2').value,
-        q3: document.getElementById('q3').value.trim()
-      }
+      answers
     };
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(answers, null, 2));
+    // Download JSON file
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(submission, null, 2));
     const dlAnchorElem = document.createElement('a');
     dlAnchorElem.setAttribute("href", dataStr);
-    dlAnchorElem.setAttribute("download", "centroid_test_results.json");
+    const fileName = `centroid_solutions_test_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+    dlAnchorElem.setAttribute("download", fileName);
     document.body.appendChild(dlAnchorElem);
     dlAnchorElem.click();
     dlAnchorElem.remove();
+    alert("Test submitted! Thank you.");
   });
+
+  // Initial render
+  renderQuestion(currentIndex);
+
+})();
 </script>
 
 </body>
