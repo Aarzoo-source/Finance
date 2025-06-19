@@ -35,35 +35,29 @@
     margin-bottom: 25px;
   }
 
-  /* Question text box: just wraps the question, blue bg, no fixed height */
   .question-text {
     background-color: rgb(108, 195, 224);
     padding: 10px 15px;
     border-radius: 10px;
     font-weight: bold;
     color: #000;
-    display: inline-block;  /* shrink to content width */
+    width: 16cm;
+    height: 1cm;
+    line-height: 1cm;
+    overflow: hidden;
+    white-space: nowrap;
     margin-bottom: 8px;
   }
 
-  /* Answers: textareas bigger and consistent */
   textarea, select {
-    background-color: #fff;
+    width: 16cm;
+    height: 3cm;
+    font-family: 'Andalus', Arial, sans-serif;
+    font-size: 18px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 18px;
-    width: 100%;
-    font-family: 'Andalus', Arial, sans-serif;
-    box-sizing: border-box; /* ensures padding included in width */
-  }
-
-  textarea {
-    min-height: 120px;
-    resize: vertical;
-  }
-
-  select {
-    height: 40px;
+    padding: 5px;
+    resize: none;
   }
 
   button {
@@ -124,7 +118,115 @@
 
 <script>
 (() => {
-  // Timer and snapshots logic here (you can keep your existing script)
+  const testDurationSec = 300; // 5 minutes
+  let timeLeft = testDurationSec;
+  const timerEl = document.getElementById('timer');
+  const warningEl = document.getElementById('warning');
+  const form = document.getElementById('testForm');
+  const camera = document.getElementById('camera');
+  const photosEl = document.getElementById('photos');
+
+  let snapshots = [];
+  let snapshotIntervalId = null;
+  let timerIntervalId = null;
+  let testSubmitted = false;
+
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      camera.srcObject = stream;
+    } catch (err) {
+      alert('Camera access is required to take snapshots during the test.');
+      console.error(err);
+    }
+  }
+
+  function takeSnapshot() {
+    if (!camera.srcObject) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = camera.videoWidth || 320;
+    canvas.height = camera.videoHeight || 240;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(camera, 0, 0, canvas.width, canvas.height);
+    const imageData = canvas.toDataURL('image/png');
+    const timestamp = new Date().toISOString();
+    snapshots.push({ timestamp, imageData });
+    photosEl.textContent = `Snapshots taken: ${snapshots.length}`;
+  }
+
+  function updateTimer() {
+    const minutes = String(Math.floor(timeLeft / 60)).padStart(2,'0');
+    const seconds = String(timeLeft % 60).padStart(2,'0');
+    timerEl.textContent = `Time Left: ${minutes}:${seconds}`;
+  }
+
+  function submitTest(reason) {
+    if (testSubmitted) return;
+    testSubmitted = true;
+
+    clearInterval(timerIntervalId);
+    clearInterval(snapshotIntervalId);
+
+    warningEl.style.display = 'block';
+    warningEl.textContent = reason ? `Test submitted automatically: ${reason}` : 'Test submitted successfully!';
+
+    const answers = {
+      submittedAt: new Date().toISOString(),
+      reason: reason || 'Manual submit',
+      answers: {
+        q1: form.q1.value.trim(),
+        q2: form.q2.value,
+        q3: form.q3.value.trim()
+      },
+      snapshots
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(answers, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    const fileName = `finance_test_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+    dlAnchorElem.setAttribute("download", fileName);
+    document.body.appendChild(dlAnchorElem);
+    dlAnchorElem.click();
+    dlAnchorElem.remove();
+
+    form.querySelectorAll('input, textarea, select, button').forEach(el => el.disabled = true);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !testSubmitted) {
+      submitTest('Tab/window switch detected');
+    }
+  });
+
+  function startTimer() {
+    updateTimer();
+    timerIntervalId = setInterval(() => {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) {
+        submitTest('Time is up');
+      }
+    }, 1000);
+  }
+
+  function startSnapshots() {
+    takeSnapshot();
+    snapshotIntervalId = setInterval(() => {
+      takeSnapshot();
+    }, 60000);
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (testSubmitted) return;
+    submitTest('Manual submission');
+  });
+
+  startCamera();
+  startTimer();
+  startSnapshots();
 })();
 </script>
 
