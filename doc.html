@@ -6,228 +6,119 @@
   <title>Centroid Solutions</title>
   <style>
     body {
-      font-family: 'Andalus', Arial, sans-serif;
+      font-family: Arial, sans-serif;
       font-size: 18px;
-      max-width: 1000px;
-      margin: auto;
-      padding: 1rem;
+      margin: 0;
+      padding: 2rem;
       background-color: #f9f9f9;
     }
 
     h1 {
       text-align: center;
+      margin-bottom: 2rem;
     }
 
-    .timer {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .warning {
-      color: red;
-      font-weight: bold;
-      text-align: center;
-      margin: 1rem 0;
-    }
-
-    .question-container {
+    .question-block {
       display: none;
-      margin-bottom: 25px;
+      margin: auto;
+      max-width: 16cm;
+      background-color: rgb(108, 195, 224);
+      padding: 1cm;
+      border-radius: 8px;
+      box-sizing: border-box;
     }
 
     .question-text {
-      background-color: rgb(108, 195, 224);
-      padding: 10px 15px;
-      border-radius: 10px;
-      font-weight: bold;
-      color: #000;
+      margin-bottom: 1cm;
       height: 1cm;
-      width: 16cm;
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto 10px auto;
     }
 
-    textarea, select {
-      background-color: #fff;
+    textarea,
+    select {
+      width: 100%;
+      height: 3cm;
+      font-size: 1rem;
+      padding: 0.5rem;
       border: 1px solid #ccc;
       border-radius: 5px;
-      font-size: 18px;
-      font-family: 'Andalus', Arial, sans-serif;
-      width: 16cm;
-      display: block;
-      margin: auto;
-    }
-
-    textarea {
-      height: 3cm;
-    }
-
-    select {
-      height: 1cm;
+      box-sizing: border-box;
     }
 
     .nav-buttons {
+      margin-top: 5cm;
       display: flex;
       justify-content: flex-end;
       gap: 2cm;
-      margin-top: 5cm;
-      margin-right: 2rem;
     }
 
     .nav-buttons button {
       background-color: rgb(108, 195, 224);
-      color: #000;
       border: none;
       padding: 0.6rem 1.2rem;
-      font-size: 18px;
+      font-size: 1rem;
       cursor: pointer;
-      border-radius: 6px;
-    }
-
-    .nav-buttons button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
 
-<h1>Centroid Solutions</h1>
-<div class="timer" id="timer">Time Left: 05:00</div>
-<div class="warning" id="warning" style="display:none;"></div>
+  <h1>Centroid Solutions</h1>
 
-<form id="testForm">
-  <div class="question-container" id="question1">
-    <div class="question-text">1. What is the primary function of the Federal Reserve?</div>
-    <textarea id="q1"></textarea>
-    <div class="nav-buttons">
-      <button type="button" id="nextBtn1">Next</button>
+  <form id="testForm">
+    <!-- Question 1 -->
+    <div class="question-block" id="q1-block">
+      <div class="question-text">1. What is the primary function of the Federal Reserve?</div>
+      <textarea id="q1"></textarea>
+      <div class="nav-buttons">
+        <button type="button" onclick="showQuestion(2)">Next</button>
+      </div>
     </div>
-  </div>
 
-  <div class="question-container" id="question2">
-    <div class="question-text">2. Which financial statement shows a company's assets and liabilities?</div>
-    <select id="q2">
-      <option value="" disabled selected>Select an option</option>
-      <option value="Income Statement">Income Statement</option>
-      <option value="Balance Sheet">Balance Sheet</option>
-      <option value="Cash Flow Statement">Cash Flow Statement</option>
-    </select>
-    <div class="nav-buttons">
-      <button type="button" id="prevBtn2">Previous</button>
-      <button type="button" id="nextBtn2">Next</button>
+    <!-- Question 2 -->
+    <div class="question-block" id="q2-block">
+      <div class="question-text">2. Which financial statement shows a company's assets and liabilities?</div>
+      <select id="q2">
+        <option value="" disabled selected>Select an option</option>
+        <option>Income Statement</option>
+        <option>Balance Sheet</option>
+        <option>Cash Flow Statement</option>
+      </select>
+      <div class="nav-buttons">
+        <button type="button" onclick="showQuestion(1)">Previous</button>
+        <button type="button" onclick="showQuestion(3)">Next</button>
+      </div>
     </div>
-  </div>
 
-  <div class="question-container" id="question3">
-    <div class="question-text">3. Explain the difference between a stock and a bond.</div>
-    <textarea id="q3"></textarea>
-    <div class="nav-buttons">
-      <button type="button" id="prevBtn3">Previous</button>
-      <button type="submit" id="submitBtn">Submit</button>
+    <!-- Question 3 -->
+    <div class="question-block" id="q3-block">
+      <div class="question-text">3. Explain the difference between a stock and a bond.</div>
+      <textarea id="q3"></textarea>
+      <div class="nav-buttons">
+        <button type="button" onclick="showQuestion(2)">Previous</button>
+        <button type="submit">Submit</button>
+      </div>
     </div>
-  </div>
-</form>
+  </form>
 
-<script>
-(() => {
-  const testDurationSec = 300;
-  let timeLeft = testDurationSec;
-  const timerEl = document.getElementById('timer');
-  const warningEl = document.getElementById('warning');
-  const form = document.getElementById('testForm');
-  const questions = [
-    document.getElementById('question1'),
-    document.getElementById('question2'),
-    document.getElementById('question3')
-  ];
-  let currentQuestion = 0;
-  let testSubmitted = false;
-
-  function updateTimer() {
-    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-    const seconds = String(timeLeft % 60).padStart(2, '0');
-    timerEl.textContent = `Time Left: ${minutes}:${seconds}`;
-  }
-
-  function submitTest(reason) {
-    if (testSubmitted) return;
-    testSubmitted = true;
-    clearInterval(timerIntervalId);
-    warningEl.style.display = 'block';
-    warningEl.textContent = reason ? `Test submitted automatically: ${reason}` : 'Test submitted successfully!';
-    const answers = {
-      submittedAt: new Date().toISOString(),
-      reason: reason || 'Manual submit',
-      answers: {
-        q1: form.q1.value.trim(),
-        q2: form.q2.value,
-        q3: form.q3.value.trim()
+  <script>
+    function showQuestion(num) {
+      const totalQuestions = 3;
+      for (let i = 1; i <= totalQuestions; i++) {
+        document.getElementById(`q${i}-block`).style.display = i === num ? 'block' : 'none';
       }
-    };
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(answers, null, 2));
-    const dlAnchorElem = document.createElement('a');
-    dlAnchorElem.setAttribute("href", dataStr);
-    const fileName = `test_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
-    dlAnchorElem.setAttribute("download", fileName);
-    document.body.appendChild(dlAnchorElem);
-    dlAnchorElem.click();
-    dlAnchorElem.remove();
-    form.querySelectorAll('input, textarea, select, button').forEach(el => el.disabled = true);
-  }
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && !testSubmitted) {
-      submitTest('Tab/window switch detected');
     }
-  });
 
-  const timerIntervalId = setInterval(() => {
-    timeLeft--;
-    updateTimer();
-    if (timeLeft <= 0) {
-      submitTest('Time is up');
-    }
-  }, 1000);
+    // Initialize: show Q1
+    showQuestion(1);
 
-  function showQuestion(index) {
-    questions.forEach((q, i) => {
-      q.style.display = i === index ? 'block' : 'none';
+    document.getElementById("testForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("Form submitted!");
     });
-  }
-
-  document.getElementById('nextBtn1').addEventListener('click', () => {
-    currentQuestion = 1;
-    showQuestion(currentQuestion);
-  });
-
-  document.getElementById('nextBtn2').addEventListener('click', () => {
-    currentQuestion = 2;
-    showQuestion(currentQuestion);
-  });
-
-  document.getElementById('prevBtn2').addEventListener('click', () => {
-    currentQuestion = 0;
-    showQuestion(currentQuestion);
-  });
-
-  document.getElementById('prevBtn3').addEventListener('click', () => {
-    currentQuestion = 1;
-    showQuestion(currentQuestion);
-  });
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!testSubmitted) submitTest('Manual submission');
-  });
-
-  showQuestion(currentQuestion);
-  updateTimer();
-})();
-</script>
+  </script>
 
 </body>
 </html>
