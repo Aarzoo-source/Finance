@@ -6,7 +6,8 @@
 <title>Finance Closed-Book Test</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Andalus', Arial, sans-serif;
+    font-size: 18px;
     max-width: 700px;
     margin: auto;
     padding: 1rem;
@@ -30,28 +31,31 @@
     margin: 1rem 0;
   }
 
-  .question-block {
+  .question-container {
+    margin-bottom: 25px;
+  }
+
+  .question-text {
     background-color: rgb(108, 195, 224);
-    padding: 15px;
+    padding: 10px 15px;
     border-radius: 10px;
-    margin-bottom: 20px;
-  }
-
-  .question-block label {
-    display: block;
     font-weight: bold;
-    margin-bottom: 10px;
     color: #000;
+    max-width: fit-content;
+    margin-bottom: 8px;
   }
 
-  .question-block textarea,
-  .question-block select {
+  textarea, select {
     background-color: #fff;
     border: 1px solid #ccc;
-    padding: 10px;
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: 18px;
     width: 100%;
+    font-family: 'Andalus', Arial, sans-serif;
+  }
+
+  textarea {
+    min-height: 100px;
   }
 
   button {
@@ -83,13 +87,13 @@
 <div class="warning" id="warning" style="display:none;"></div>
 
 <form id="testForm">
-  <div class="question-block">
-    <label for="q1">1. What is the primary function of the Federal Reserve?</label>
-    <textarea id="q1" rows="3" required></textarea>
+  <div class="question-container">
+    <div class="question-text">1. What is the primary function of the Federal Reserve?</div>
+    <textarea id="q1" rows="5" required></textarea>
   </div>
 
-  <div class="question-block">
-    <label for="q2">2. Which financial statement shows a company's assets and liabilities?</label>
+  <div class="question-container">
+    <div class="question-text">2. Which financial statement shows a company's assets and liabilities?</div>
     <select id="q2" required>
       <option value="" disabled selected>Select an option</option>
       <option value="Income Statement">Income Statement</option>
@@ -98,9 +102,9 @@
     </select>
   </div>
 
-  <div class="question-block">
-    <label for="q3">3. Explain the difference between a stock and a bond.</label>
-    <textarea id="q3" rows="3" required></textarea>
+  <div class="question-container">
+    <div class="question-text">3. Explain the difference between a stock and a bond.</div>
+    <textarea id="q3" rows="5" required></textarea>
   </div>
 
   <button type="submit">Submit Test</button>
