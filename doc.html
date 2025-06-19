@@ -46,7 +46,8 @@
       width: 16cm;
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      justify-content: center;
+      margin: 0 auto 10px auto;
     }
 
     textarea, select {
@@ -56,6 +57,8 @@
       font-size: 18px;
       font-family: 'Andalus', Arial, sans-serif;
       width: 16cm;
+      display: block;
+      margin: auto;
     }
 
     textarea {
@@ -70,7 +73,7 @@
       display: flex;
       justify-content: flex-end;
       gap: 2cm;
-      margin-top: 8cm;
+      margin-top: 5cm;
       margin-right: 2rem;
     }
 
@@ -99,30 +102,34 @@
 <form id="testForm">
   <div class="question-container" id="question1">
     <div class="question-text">1. What is the primary function of the Federal Reserve?</div>
-    <textarea id="q1" required></textarea>
+    <textarea id="q1"></textarea>
+    <div class="nav-buttons">
+      <button type="button" id="nextBtn1">Next</button>
+    </div>
   </div>
 
   <div class="question-container" id="question2">
     <div class="question-text">2. Which financial statement shows a company's assets and liabilities?</div>
-    <select id="q2" required>
+    <select id="q2">
       <option value="" disabled selected>Select an option</option>
       <option value="Income Statement">Income Statement</option>
       <option value="Balance Sheet">Balance Sheet</option>
       <option value="Cash Flow Statement">Cash Flow Statement</option>
     </select>
+    <div class="nav-buttons">
+      <button type="button" id="prevBtn2">Previous</button>
+      <button type="button" id="nextBtn2">Next</button>
+    </div>
   </div>
 
   <div class="question-container" id="question3">
     <div class="question-text">3. Explain the difference between a stock and a bond.</div>
-    <textarea id="q3" required></textarea>
+    <textarea id="q3"></textarea>
+    <div class="nav-buttons">
+      <button type="button" id="prevBtn3">Previous</button>
+      <button type="submit" id="submitBtn">Submit</button>
+    </div>
   </div>
-
-  <div class="nav-buttons">
-    <button type="button" id="prevBtn">Previous</button>
-    <button type="button" id="nextBtn">Next</button>
-  </div>
-
-  <button type="submit" style="display: none;" id="submitBtn">Submit Test</button>
 </form>
 
 <script>
@@ -192,21 +199,24 @@
     });
   }
 
-  document.getElementById('prevBtn').addEventListener('click', () => {
-    if (currentQuestion > 0) {
-      currentQuestion--;
-      showQuestion(currentQuestion);
-    }
+  document.getElementById('nextBtn1').addEventListener('click', () => {
+    currentQuestion = 1;
+    showQuestion(currentQuestion);
   });
 
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    if (currentQuestion < questions.length - 1) {
-      currentQuestion++;
-      showQuestion(currentQuestion);
-    }
-    if (currentQuestion === questions.length - 1) {
-      document.getElementById('submitBtn').style.display = 'block';
-    }
+  document.getElementById('nextBtn2').addEventListener('click', () => {
+    currentQuestion = 2;
+    showQuestion(currentQuestion);
+  });
+
+  document.getElementById('prevBtn2').addEventListener('click', () => {
+    currentQuestion = 0;
+    showQuestion(currentQuestion);
+  });
+
+  document.getElementById('prevBtn3').addEventListener('click', () => {
+    currentQuestion = 1;
+    showQuestion(currentQuestion);
   });
 
   form.addEventListener('submit', e => {
@@ -214,7 +224,6 @@
     if (!testSubmitted) submitTest('Manual submission');
   });
 
-  // Initialize
   showQuestion(currentQuestion);
   updateTimer();
 })();
