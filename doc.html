@@ -6,11 +6,11 @@
   <title>Centroid Solutions</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Andalus', Arial, sans-serif;
       font-size: 18px;
+      background-color: #f9f9f9;
       margin: 0;
       padding: 2rem;
-      background-color: #f9f9f9;
     }
 
     h1 {
@@ -18,108 +18,156 @@
       margin-bottom: 2rem;
     }
 
-    .question-block {
+    .question-container {
       display: none;
-      margin: auto;
       max-width: 16cm;
-      margin-bottom: 0;
+      margin: 0 auto;
     }
 
-    .question-text {
+    .question-box {
       background-color: rgb(108, 195, 224);
-      padding: 0.5rem 1rem;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 1rem;
+      width: 16cm;
       height: 1cm;
       display: flex;
       align-items: center;
-      border-radius: 5px;
-      margin-bottom: 1rem;
     }
 
     textarea,
     select {
       background-color: #fff;
-      width: 100%;
-      height: 3cm;
-      font-size: 1rem;
-      padding: 0.5rem;
       border: 1px solid #ccc;
       border-radius: 5px;
-      box-sizing: border-box;
+      font-size: 18px;
+      width: 16cm;
+      font-family: 'Andalus', Arial, sans-serif;
+    }
+
+    textarea {
+      height: 3cm;
+    }
+
+    .dropdown-answer {
+      height: 1cm;
     }
 
     .nav-buttons {
-      margin-top: 5cm;
       display: flex;
       justify-content: flex-end;
       gap: 2cm;
+      margin-top: 5cm;
+      width: 16cm;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .nav-buttons button {
       background-color: rgb(108, 195, 224);
       border: none;
-      padding: 0.3rem 1.2rem;
+      padding: 0 1.5rem;
       font-size: 1rem;
-      height: 0.5cm;
+      height: 1cm;
       cursor: pointer;
       border-radius: 5px;
+    }
+
+    .submit-button {
+      background-color: rgb(108, 195, 224);
     }
   </style>
 </head>
 <body>
 
-  <h1>Centroid Solutions</h1>
+<h1>Centroid Solutions</h1>
 
-  <form id="testForm">
-    <!-- Question 1 -->
-    <div class="question-block" id="q1-block">
-      <div class="question-text">1. What is the primary function of the Federal Reserve?</div>
-      <textarea id="q1"></textarea>
-      <div class="nav-buttons">
-        <button type="button" onclick="showQuestion(2)">Next</button>
-      </div>
+<form id="testForm">
+
+  <div class="question-container" id="question1">
+    <div class="question-box">1. What is the primary function of the Federal Reserve?</div>
+    <textarea id="q1" required></textarea>
+    <div class="nav-buttons">
+      <button type="button" onclick="nextQuestion()">Next</button>
     </div>
+  </div>
 
-    <!-- Question 2 -->
-    <div class="question-block" id="q2-block">
-      <div class="question-text">2. Which financial statement shows a company's assets and liabilities?</div>
-      <select id="q2">
-        <option value="" disabled selected>Select an option</option>
-        <option>Income Statement</option>
-        <option>Balance Sheet</option>
-        <option>Cash Flow Statement</option>
-      </select>
-      <div class="nav-buttons">
-        <button type="button" onclick="showQuestion(1)">Previous</button>
-        <button type="button" onclick="showQuestion(3)">Next</button>
-      </div>
+  <div class="question-container" id="question2">
+    <div class="question-box">2. Which financial statement shows a company's assets and liabilities?</div>
+    <select id="q2" class="dropdown-answer" required>
+      <option value="" disabled selected>Select an option</option>
+      <option value="Income Statement">Income Statement</option>
+      <option value="Balance Sheet">Balance Sheet</option>
+      <option value="Cash Flow Statement">Cash Flow Statement</option>
+    </select>
+    <div class="nav-buttons">
+      <button type="button" onclick="prevQuestion()">Previous</button>
+      <button type="button" onclick="nextQuestion()">Next</button>
     </div>
+  </div>
 
-    <!-- Question 3 -->
-    <div class="question-block" id="q3-block">
-      <div class="question-text">3. Explain the difference between a stock and a bond.</div>
-      <textarea id="q3"></textarea>
-      <div class="nav-buttons">
-        <button type="button" onclick="showQuestion(2)">Previous</button>
-        <button type="submit">Submit</button>
-      </div>
+  <div class="question-container" id="question3">
+    <div class="question-box">3. Explain the difference between a stock and a bond.</div>
+    <textarea id="q3" required></textarea>
+    <div class="nav-buttons">
+      <button type="button" onclick="prevQuestion()">Previous</button>
+      <button type="submit" class="submit-button">Submit</button>
     </div>
-  </form>
+  </div>
 
-  <script>
-    function showQuestion(num) {
-      const totalQuestions = 3;
-      for (let i = 1; i <= totalQuestions; i++) {
-        document.getElementById(`q${i}-block`).style.display = i === num ? 'block' : 'none';
-      }
+</form>
+
+<script>
+  let currentQuestion = 1;
+  const totalQuestions = 3;
+
+  function showQuestion(num) {
+    for (let i = 1; i <= totalQuestions; i++) {
+      document.getElementById(`question${i}`).style.display = 'none';
     }
+    document.getElementById(`question${num}`).style.display = 'block';
+  }
 
-    showQuestion(1);
+  function nextQuestion() {
+    if (currentQuestion < totalQuestions) {
+      currentQuestion++;
+      showQuestion(currentQuestion);
+    }
+  }
 
-    document.getElementById("testForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      alert("Test Submitted!");
-    });
-  </script>
+  function prevQuestion() {
+    if (currentQuestion > 1) {
+      currentQuestion--;
+      showQuestion(currentQuestion);
+    }
+  }
+
+  // Show the first question on load
+  document.addEventListener('DOMContentLoaded', () => {
+    showQuestion(currentQuestion);
+  });
+
+  document.getElementById('testForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const answers = {
+      submittedAt: new Date().toISOString(),
+      answers: {
+        q1: document.getElementById('q1').value.trim(),
+        q2: document.getElementById('q2').value,
+        q3: document.getElementById('q3').value.trim()
+      }
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(answers, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", "centroid_test_results.json");
+    document.body.appendChild(dlAnchorElem);
+    dlAnchorElem.click();
+    dlAnchorElem.remove();
+  });
+</script>
 
 </body>
 </html>
