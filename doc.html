@@ -35,53 +35,44 @@
     margin-bottom: 25px;
   }
 
-  /* Question text box style */
   .question-text {
     background-color: rgb(108, 195, 224);
-    padding: 10px 15px;
+    padding: 0 10px;
     border-radius: 10px;
     font-weight: bold;
     color: #000;
     width: 16cm;
+    height: 1cm;
+    line-height: 1cm;
+    box-sizing: border-box;
     display: flex;
-    align-items: center; /* vertical center */
-    /* height will be dynamic to match answer */
-    margin-bottom: 8px;
-    box-sizing: border-box;
+    align-items: center; /* vertical center text */
   }
 
-  /* Textarea style for answers (summary answers) */
-  textarea {
+  /* For dropdown questions: question height = answer height (3 cm) */
+  .question-text.dropdown {
+    height: 3cm;
+    line-height: 3cm;
+  }
+
+  textarea, select {
     width: 16cm;
-    height: 3cm; /* summary answer height */
     font-family: 'Andalus', Arial, sans-serif;
     font-size: 18px;
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 5px;
+    box-sizing: border-box;
+  }
+
+  /* Summary answer textarea with height 3 cm */
+  textarea.summary {
+    height: 3cm;
     resize: none;
-    box-sizing: border-box;
   }
 
-  /* Select style */
+  /* Dropdown select with height 3 cm */
   select {
-    width: 16cm;
-    font-family: 'Andalus', Arial, sans-serif;
-    font-size: 18px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 5px;
-    height: 2.5cm; /* height for dropdown */
-    box-sizing: border-box;
-  }
-
-  /* For question text that corresponds to dropdown: match height */
-  .dropdown-question {
-    height: 2.5cm;
-  }
-
-  /* For questions with textareas except summary (make height same as textarea) */
-  .short-answer-question {
     height: 3cm;
   }
 
@@ -115,12 +106,12 @@
 
 <form id="testForm">
   <div class="question-container">
-    <div class="question-text short-answer-question">1. What is the primary function of the Federal Reserve?</div>
-    <textarea id="q1" rows="2" required></textarea>
+    <div class="question-text">1. What is the primary function of the Federal Reserve?</div>
+    <textarea id="q1" rows="2" class="summary" required></textarea>
   </div>
 
   <div class="question-container">
-    <div class="question-text dropdown-question">2. Which financial statement shows a company's assets and liabilities?</div>
+    <div class="question-text dropdown">2. Which financial statement shows a company's assets and liabilities?</div>
     <select id="q2" required>
       <option value="" disabled selected>Select an option</option>
       <option value="Income Statement">Income Statement</option>
@@ -130,8 +121,8 @@
   </div>
 
   <div class="question-container">
-    <div class="question-text short-answer-question">3. Explain the difference between a stock and a bond.</div>
-    <textarea id="q3" rows="2" required></textarea>
+    <div class="question-text">3. Explain the difference between a stock and a bond.</div>
+    <textarea id="q3" rows="2" class="summary" required></textarea>
   </div>
 
   <button type="submit">Submit Test</button>
